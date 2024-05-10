@@ -1,6 +1,4 @@
-# Estudiante de Ingenieria en Sistemas de Informacion
-## Desarrolador
-## Músico 
+## Estudiante de Ingenieria en Sistemas de Informacion. Desarrollador. Músico 
 
 ### Formación 
 
