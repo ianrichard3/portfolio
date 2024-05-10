@@ -1,0 +1,5 @@
+As the user asks for kanji readings these can be stored in a file. xD
+
+The application should be able to show/store the meaning of the input kanji
+
+jisho's web search mode (by copy clipboard and by screenshot), reading showing mode, all storing the vocabulary in the data base

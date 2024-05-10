@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Audio Recorder</title>
+</head>
+<body>
+    <h1>Record your audio:</h1>
+    <button id="play">Play</button>
+    <button id="stop">Stop</button>
+    <button id="new">New Audio</button>
+    <h1>Record your audio:</h1>
+    <button id="startRecording">Start</button>
+    <button id="stopRecording">Stop Recording</button>
+    <button id="send">Send Audio</button>
+
+    <!-- <audio id="recordedAudio" controls></audio> -->
+    <!-- <audio id="audio" src="../goaty.wav"></audio> -->
+
+    <script>
+        // const recorder = document.getElementById('recordedAudio');
+        
+
+        
+        let aBlob;
+
+        // fetch("get-audio", {method: "GET"}).then(res => {
+        //     console.log(res);
+        //     blob = new Blob(res.body.blob);
+        //     console.log(blob);
+        //     let audio = new Audio(window.URL.createObjectURL(blob));
+        //     let loopDuration = audio.duration;
+        //     console.log(loopDuration);
+
+        // })
+
+
+
+        var req;
+        let audio;
+        let loopDuration;
+        let audioNum;
+
+        
+
+       
+
+
+
+        // PLAY BUTTON
+
+        document.getElementById("play").addEventListener("click", () => {
+            
+
+            if (audioNum == undefined) audioNum = 1;
+
+            console.log("requesting audio "+ audioNum)      
+            req = new XMLHttpRequest();      
+            req.open("GET", "/get-audio/" + audioNum, true);
+            req.responseType = "blob";
+            req.setRequestHeader("Content-type", "audio/wav");
+            req.onreadystatechange = function(){
+                    
+                aBlob = new Blob([req.response], {type: "audio/wav"});
+                var url = window.URL.createObjectURL(aBlob);
+                console.log(aBlob)
+                
+                audio = new Audio();
+                
+                audio.src = window.URL.createObjectURL(aBlob);
+
+                audio.play()
+                audio.loop = true;
+                // loopDuration = audio.duration;
+        };
+
+        
+            req.send();
+            
+
+
+
+            
+        })
+
+        // STOP BUTTON
+        
+
+        document.getElementById("stop").addEventListener("click", () => {
+            audio.loop = false;
+            audio.currentTime = audio.duration;
+        })
+
+        // NEW AUDIO BUTTON
+        
+        document.getElementById("new").addEventListener("click", () => {
+            window.location.replace("/new-audio")
+        })
+
+
+
+
+
+
+
+
+
+
+
+
+
+        // NEW AUDIO
+
+
+
+
+         // const recorder = document.getElementById('recordedAudio');
+        
+        let mediaRecorder;
+        let chunks = [];
+        let blob;
+        let curAudio;
+
+        let startRec = document.getElementById('startRecording');
+
+
+        // START RECORDING BUTTON
+        
+
+        document.getElementById('startRecording').addEventListener('click', async () => {
+           
+            try {
+                // chunks = [];
+                
+                // if (typeof(mediaRecorder) !== undefined && mediaRecorder.state == "recording") return;
+                
+                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                mediaRecorder = new MediaRecorder(stream);
+                startRec.innerHTML = "Recording!!";
+                
+                
+                mediaRecorder.ondataavailable = (e) => {
+                    // if (e.data) {
+
+                        chunks.push(e.data)
+                        curData = e.data;
+                        // console.log(chunks);
+                    // }
+                    console.log(chunks);
+                };
+
+
+                mediaRecorder.onstop = e => {
+                    startRec.innerHTML = "Start";
+                    blob = new Blob(chunks)
+                    chunks = [];
+                    // document.getElementById("recordedAudio").src = URL.createObjectURL(blob);
+
+                    let fd = new FormData();
+                    fd.append("audio", blob, "audio");
+
+                    fetch("store-audio",
+                    {
+                        method: "POST",
+                        body: fd}
+                     ).then(response => {
+                        var r = response.json()
+                        r.then(data => {
+                            audioNum = data.data;
+                            console.log("AUDIO RECEIVED: " + audioNum + ".wav")
+                            
+
+                        })
+                    
+                    })
+
+                    
+
+
+                     curAudio = blob;
+                }
+
+
+
+                mediaRecorder.start();
+
+                
+
+                
+                
+                
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        
+        });
+
+        // STOP BUTTON
+
+        document.getElementById('stopRecording').addEventListener('click', () => {
+            if (mediaRecorder.state !== "recording") return;
+            mediaRecorder.stop();
+                 
+
+        });
+
+
+        // SEND AUDIO BUTTON
+        
+        document.getElementById('send').addEventListener('click', () => {
+            let fd = new FormData();
+                    fd.append("audio", curAudio, "audio");
+
+                    fetch("store-audio",
+                    {
+                        method: "POST",
+                        body: fd}
+                     ).then((response) => {
+                     })
+                    
+                })
+
+        
+
+
+        
+    </script>
+</body>
+</html>

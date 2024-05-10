@@ -1,0 +1,4 @@
+port=<Port>
+receiver_ip=<ReceiverIP>
+to_send_path=to_send
+received_path=received

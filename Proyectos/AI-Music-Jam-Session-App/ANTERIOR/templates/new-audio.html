@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Audio Recorder</title>
+</head>
+<body>
+    <h1>Record your audio:</h1>
+    <button id="startRecording">Start</button>
+    <button id="stopRecording">Stop Recording</button>
+    <button id="send">Send Audio</button>
+    <button id="play">Play Audio</button>
+
+    <audio id="recordedAudio" controls></audio>
+
+    <script>
+        // const recorder = document.getElementById('recordedAudio');
+        
+        let mediaRecorder;
+        let chunks = [];
+        let blob;
+        let curAudio;
+
+        let startRec = document.getElementById('startRecording');
+
+        document.getElementById('startRecording').addEventListener('click', async () => {
+           
+            try {
+                // chunks = [];
+                
+                // if (typeof(mediaRecorder) !== undefined && mediaRecorder.state == "recording") return;
+                
+                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                mediaRecorder = new MediaRecorder(stream);
+                startRec.innerHTML = "Recording!!";
+                
+                
+                mediaRecorder.ondataavailable = (e) => {
+                    // if (e.data) {
+
+                        chunks.push(e.data)
+                        curData = e.data;
+                        // console.log(chunks);
+                    // }
+                    console.log(chunks);
+                };
+
+
+                mediaRecorder.onstop = e => {
+                    startRec.innerHTML = "Start";
+                    blob = new Blob(chunks)
+                    chunks = [];
+                    document.getElementById("recordedAudio").src = URL.createObjectURL(blob);
+
+                    let fd = new FormData();
+                    fd.append("audio", blob, "audio");
+
+                    fetch("store-audio",
+                    {
+                        method: "POST",
+                        body: fd}
+                     ).then((response) => {
+
+                     })
+
+
+                     curAudio = blob;
+                }
+
+
+
+                mediaRecorder.start();
+
+                
+
+                
+                
+                
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        
+        });
+
+        document.getElementById('stopRecording').addEventListener('click', () => {
+            if (mediaRecorder.state !== "recording") return;
+            mediaRecorder.stop();
+                 
+
+        });
+
+
+        document.getElementById('send').addEventListener('click', () => {
+            let fd = new FormData();
+                    fd.append("audio", curAudio, "audio");
+
+                    fetch("store-audio",
+                    {
+                        method: "POST",
+                        body: fd}
+                     ).then((response) => {
+                     })
+                    
+                })
+
+        document.getElementById('play').addEventListener('click', () => {
+            window.location.replace("/")
+                 
+
+        });
+    </script>
+</body>
+</html>

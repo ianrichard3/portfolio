@@ -1,0 +1,25 @@
+
+Para ejecutar runear el main
+
+Para seleccionar la region de la screenshot se utiliza el mid click.
+La Ruedita del mouse.
+
+Entonces el programa va tomando screenshots y generando imagenes en tiempo real.
+
+
+
+
+
+dependencias
+
+
+torch
+torchvision
+diffusers
+customtkinter
+PIL
+pyautogui
+Win32API
+transformers
+accelerate
+otras mas que te va a ir pidiendo

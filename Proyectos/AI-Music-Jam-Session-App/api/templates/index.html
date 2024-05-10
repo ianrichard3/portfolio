@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Audio Recorder</title>
+</head>
+
+<body>
+    <h1>Record your audio:</h1>
+    <button id="play">Play</button>
+    <button id="stop">Stop</button>
+    <button id="record">Record</button>
+
+    <input id="bpm" type="number">
+
+    <audio id="click" src="{{ url_for('static', filename='click.mp3') }}" preload="auto"></audio>
+    <audio id="goaty" src="{{ url_for('static', filename='goaty.wav') }}" preload="auto"></audio>
+    
+
+
+    <div class="slidecontainer">
+        <h5>Volume</h5>
+        <input type="range" min="1" max="100" value="50" class="slider" id="volume">
+    </div>
+
+    <script>
+
+        // let audio = new Audio("/api/click.mp3");
+        let audio = document.getElementById("click");
+        let goaty = document.getElementById("goaty");
+
+        const minute = 60000;
+        let bpm = 80;
+        let timeSig = 4;
+        let barAmount = 4;
+        let clicksPerLoop = timeSig * barAmount;
+
+
+        let timeInterval = minute/bpm;
+        let playButton = document.getElementById("play");
+        let clickLoop;
+
+
+        let curClick = 0;
+        let curClickOnMusicLoop = 0;
+        
+
+        playButton.onclick = () => {
+            // First click
+            
+
+
+
+            clickLoop = setInterval(() => {
+            audio.pause()
+            audio.currentTime = 0;
+            audio.play();
+            
+            curClick++;
+            curClickOnMusicLoop++;
+            curClick = curClick % timeSig;
+            curClickOnMusicLoop = curClickOnMusicLoop % clicksPerLoop;
+
+            if (curClick == 1) 
+            {
+                // Bar start
+                console.log("Iou")
+                
+            }
+
+
+            if (curClickOnMusicLoop == 1 )
+            {
+                // Loop Start
+                goaty.pause()
+                goaty.currentTime = 0;
+                goaty.play()
+            }
+            
+            
+            
+
+
+                }
+
+
+            
+        , timeInterval);
+
+        };
+
+        stopButton = document.getElementById("stop");
+        stopButton.onclick = () => {
+            clearInterval(clickLoop);
+            audio.pause();
+            audio.currentTime = 0;
+            
+            goaty.pause();
+            goaty.currentTime = 0;
+        }
+
+        
+
+        
+    </script>
+
+
+</body>
+
+</html>
