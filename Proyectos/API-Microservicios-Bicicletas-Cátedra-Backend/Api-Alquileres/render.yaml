@@ -1,0 +1,3 @@
+services:
+  - name: test-hosting-api
+    buildCommand: ./mvnw spring-boot:run
